@@ -49,9 +49,9 @@ namespace astro2 {
 
 
 	private: System::Windows::Forms::Label^  RALabel;
-	private: System::Windows::Forms::TrackBar^  decBBar;
+	private: System::Windows::Forms::TrackBar^  heightBar;
 
-	private: System::Windows::Forms::TrackBar^  decTBar;
+	private: System::Windows::Forms::TrackBar^  decBar;
 
 	private: System::Windows::Forms::Label^  RARLabel;
 	private: System::Windows::Forms::Label^  RALLabel;
@@ -68,12 +68,21 @@ namespace astro2 {
 		/// </summary>
 		System::ComponentModel::Container ^components;
 		double AzCent, AzLeft, AzRight;
-		double altTop, altBottom;
+		double altCent, altTop, altBottom;
 		static double pi = acos(-1.0);
 		Graphics^ graph;
 		Rectangle rect;
 		static const double groupRadX=2*pi/32.0, groupRadY=pi/32.0;
 		Int16 Mthres;
+        static Pen^ gridPen = gcnew Pen(Color::Blue);
+		static Pen^ starOPen = gcnew Pen(Color::PaleTurquoise);
+		static Pen^ starBPen = gcnew Pen(Color::PaleTurquoise);
+		static Pen^ starAPen = gcnew Pen(Color::White);
+		static Pen^ starFPen = gcnew Pen(Color::Yellow);
+		static Pen^ starGPen = gcnew Pen(Color::Orange);
+		static Pen^ starKPen = gcnew Pen(Color::Tomato);
+		static Pen^ starMPen = gcnew Pen(Color::Tomato);
+
 		
 		ref class SAOheader {
 		public:
@@ -107,7 +116,7 @@ namespace astro2 {
 				size = (Math::Pow(vi, gamma)-c0)/(c1-c0)*4+1;
 			}
 			System::Void draw(Form2 ^form) {
-				form->drawStar(this->sra0/pi*180.0, this->sdec0/pi*180.0, size);
+				form->drawStar(this->sra0/pi*180.0, this->sdec0/pi*180.0, size, this->is[0]);
 			}
 			virtual int CompareTo(Object^ obj) {
 				CatalogEnt^ b = safe_cast<CatalogEnt^>(obj);
@@ -150,8 +159,8 @@ namespace astro2 {
 			this->RABar = (gcnew System::Windows::Forms::TrackBar());
 			this->widthBar = (gcnew System::Windows::Forms::TrackBar());
 			this->RALabel = (gcnew System::Windows::Forms::Label());
-			this->decBBar = (gcnew System::Windows::Forms::TrackBar());
-			this->decTBar = (gcnew System::Windows::Forms::TrackBar());
+			this->heightBar = (gcnew System::Windows::Forms::TrackBar());
+			this->decBar = (gcnew System::Windows::Forms::TrackBar());
 			this->RARLabel = (gcnew System::Windows::Forms::Label());
 			this->RALLabel = (gcnew System::Windows::Forms::Label());
 			this->decTLabel = (gcnew System::Windows::Forms::Label());
@@ -159,8 +168,8 @@ namespace astro2 {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->RABar))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->widthBar))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->decBBar))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->decTBar))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->heightBar))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->decBar))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// pictureBox1
@@ -172,12 +181,12 @@ namespace astro2 {
 			this->pictureBox1->TabStop = false;
 			this->pictureBox1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Form2::pictureBox1_Paint);
 			// 
-			// AzBar
+			// RABar
 			// 
 			this->RABar->LargeChange = 15;
 			this->RABar->Location = System::Drawing::Point(112, 411);
 			this->RABar->Maximum = 360;
-			this->RABar->Name = L"AzBar";
+			this->RABar->Name = L"RABar";
 			this->RABar->Size = System::Drawing::Size(400, 45);
 			this->RABar->SmallChange = 5;
 			this->RABar->TabIndex = 1;
@@ -197,78 +206,78 @@ namespace astro2 {
 			this->widthBar->Value = 90;
 			this->widthBar->ValueChanged += gcnew System::EventHandler(this, &Form2::updateAALabel);
 			// 
-			// AzLabel
+			// RALabel
 			// 
 			this->RALabel->AutoSize = true;
 			this->RALabel->Location = System::Drawing::Point(301, 393);
-			this->RALabel->Name = L"AzLabel";
+			this->RALabel->Name = L"RALabel";
 			this->RALabel->Size = System::Drawing::Size(23, 12);
 			this->RALabel->TabIndex = 3;
 			this->RALabel->Text = L"180";
 			this->RALabel->TextAlign = System::Drawing::ContentAlignment::BottomCenter;
 			// 
-			// altBBar
+			// heightBar
 			// 
-			this->decBBar->Location = System::Drawing::Point(618, 212);
-			this->decBBar->Maximum = 75;
-			this->decBBar->Minimum = -90;
-			this->decBBar->Name = L"altBBar";
-			this->decBBar->Orientation = System::Windows::Forms::Orientation::Vertical;
-			this->decBBar->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->decBBar->Size = System::Drawing::Size(45, 193);
-			this->decBBar->TabIndex = 4;
-			this->decBBar->TickFrequency = 15;
-			this->decBBar->ValueChanged += gcnew System::EventHandler(this, &Form2::updateAALabel);
+			this->heightBar->Location = System::Drawing::Point(618, 300);
+			this->heightBar->Maximum = 90;
+			this->heightBar->Minimum = 15;
+			this->heightBar->Name = L"heightBar";
+			this->heightBar->Orientation = System::Windows::Forms::Orientation::Vertical;
+			this->heightBar->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->heightBar->Size = System::Drawing::Size(45, 105);
+			this->heightBar->TabIndex = 4;
+			this->heightBar->TickFrequency = 15;
+			this->heightBar->Value = 45;
+			this->heightBar->ValueChanged += gcnew System::EventHandler(this, &Form2::updateAALabel);
 			// 
-			// altTBar
+			// decBar
 			// 
-			this->decTBar->Location = System::Drawing::Point(618, 13);
-			this->decTBar->Maximum = 90;
-			this->decTBar->Minimum = -75;
-			this->decTBar->Name = L"altTBar";
-			this->decTBar->Orientation = System::Windows::Forms::Orientation::Vertical;
-			this->decTBar->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->decTBar->Size = System::Drawing::Size(45, 193);
-			this->decTBar->TabIndex = 4;
-			this->decTBar->TickFrequency = 15;
-			this->decTBar->Value = 90;
-			this->decTBar->ValueChanged += gcnew System::EventHandler(this, &Form2::updateAALabel);
+			this->decBar->Location = System::Drawing::Point(618, 13);
+			this->decBar->Maximum = 90;
+			this->decBar->Minimum = -90;
+			this->decBar->Name = L"decBar";
+			this->decBar->Orientation = System::Windows::Forms::Orientation::Vertical;
+			this->decBar->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->decBar->Size = System::Drawing::Size(45, 281);
+			this->decBar->TabIndex = 4;
+			this->decBar->TickFrequency = 15;
+			this->decBar->ValueChanged += gcnew System::EventHandler(this, &Form2::updateAALabel);
 			// 
-			// AzRLabel
+			// RARLabel
 			// 
 			this->RARLabel->AutoSize = true;
 			this->RARLabel->Location = System::Drawing::Point(584, 393);
-			this->RARLabel->Name = L"AzRLabel";
+			this->RARLabel->Name = L"RARLabel";
 			this->RARLabel->Size = System::Drawing::Size(17, 12);
 			this->RARLabel->TabIndex = 5;
 			this->RARLabel->Text = L"90";
 			this->RARLabel->TextAlign = System::Drawing::ContentAlignment::BottomRight;
 			// 
-			// AzLLabel
+			// RALLabel
 			// 
 			this->RALLabel->AutoSize = true;
 			this->RALLabel->Location = System::Drawing::Point(12, 393);
-			this->RALLabel->Name = L"AzLLabel";
+			this->RALLabel->Name = L"RALLabel";
 			this->RALLabel->Size = System::Drawing::Size(17, 12);
 			this->RALLabel->TabIndex = 5;
 			this->RALLabel->Text = L"90";
 			this->RALLabel->TextAlign = System::Drawing::ContentAlignment::BottomLeft;
 			// 
-			// altTLabel
+			// decTLabel
 			// 
 			this->decTLabel->AutoSize = true;
 			this->decTLabel->Location = System::Drawing::Point(595, 12);
-			this->decTLabel->Name = L"altTLabel";
+			this->decTLabel->Name = L"decTLabel";
 			this->decTLabel->Size = System::Drawing::Size(17, 12);
 			this->decTLabel->TabIndex = 6;
 			this->decTLabel->Text = L"90";
 			this->decTLabel->TextAlign = System::Drawing::ContentAlignment::TopRight;
 			// 
-			// altBLabel
+			// decBLabel
 			// 
 			this->decBLabel->AutoSize = true;
 			this->decBLabel->Location = System::Drawing::Point(595, 381);
-			this->decBLabel->Name = L"altBLabel";
+			this->decBLabel->Name = L"decBLabel";
 			this->decBLabel->Size = System::Drawing::Size(17, 12);
 			this->decBLabel->TabIndex = 6;
 			this->decBLabel->Text = L"90";
@@ -283,8 +292,8 @@ namespace astro2 {
 			this->Controls->Add(this->decTLabel);
 			this->Controls->Add(this->RALLabel);
 			this->Controls->Add(this->RARLabel);
-			this->Controls->Add(this->decTBar);
-			this->Controls->Add(this->decBBar);
+			this->Controls->Add(this->decBar);
+			this->Controls->Add(this->heightBar);
 			this->Controls->Add(this->RALabel);
 			this->Controls->Add(this->widthBar);
 			this->Controls->Add(this->RABar);
@@ -295,8 +304,8 @@ namespace astro2 {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->RABar))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->widthBar))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->decBBar))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->decTBar))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->heightBar))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->decBar))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -317,7 +326,6 @@ namespace astro2 {
 			 }
 	private: System::Void drawGrid() {
 				 double x, y;
-				 Pen^ bluePen = gcnew Pen(Color::Blue);
 				 for (int i=0; i<=360; i+=15) {
 					 System::Drawing::Point prev = System::Drawing::Point::Empty, curr;
 					 for (double j=-75.0; j<=75.0; j+=1.0) {
@@ -331,7 +339,7 @@ namespace astro2 {
 						 curr.X = rect.X+rect.Width*x;
 						 curr.Y = rect.Y+rect.Height*y;
  						 if (!prev.IsEmpty) {
-							graph->DrawLine(bluePen, prev, curr);
+							graph->DrawLine(gridPen, prev, curr);
 						}
 					 }
 				 }
@@ -348,7 +356,7 @@ namespace astro2 {
 						 curr.X = rect.X+rect.Width*x;
 						 curr.Y = rect.Y+rect.Height*y;
 						 if (!prev.IsEmpty) {
-							graph->DrawLine(bluePen, prev, curr);
+							graph->DrawLine(gridPen, prev, curr);
 						}
 					 }
 				 }
@@ -397,31 +405,45 @@ namespace astro2 {
 				//}
 			 }
 
-	private: System::Void drawStar(double ra, double dec, int size) {
-				Pen^ whitePen = gcnew Pen(Color::White);
+	private: System::Void drawStar(double ra, double dec, int size, wchar_t is) {
+				Pen^ pen=starAPen;
 				double x, y;
 				x = windowX(ra, dec);
 				y = windowY(ra, dec);
 				if (!Double::IsNaN(x)&&!Double::IsNaN(y)) {
-					graph->DrawEllipse(whitePen, rect.X+rect.Width*x, rect.Y+rect.Height*y, size, size);
+					if (is=='O') pen = starOPen;
+					if (is=='B') pen = starBPen;
+					if (is=='A') pen = starAPen;
+					if (is=='F') pen = starFPen;
+					if (is=='G') pen = starGPen;
+					if (is=='K') pen = starKPen;
+					if (is=='M') pen = starMPen;
+					graph->DrawEllipse(pen, rect.X+rect.Width*x, rect.Y+rect.Height*y, size, size);
 				}
 			 }
 	private: System::Void updateAALabel(System::Object^  sender, System::EventArgs^  e) {
+				 if (sender==widthBar) {
+					 heightBar->Value = widthBar->Value/2;
+				 }
+				 if (sender==heightBar) {
+					 widthBar->Value = heightBar->Value*2;
+				 }
 				 AzCent = RABar->Value;
 				 RALabel->Text = AzCent.ToString();
 				 AzLeft = AzCent - widthBar->Value;
 				 RALLabel->Text = AzLeft.ToString();
 				 AzRight = AzCent + widthBar->Value;
 				 RARLabel->Text = AzRight.ToString();
-				 altBottom = decBBar->Value;
+
+				 altCent = decBar->Value;
+				 altBottom = altCent - heightBar->Value;
 				 decBLabel->Text = altBottom.ToString();
-				 decTBar->Minimum = altBottom + 15;
-				 altTop = decTBar->Value;
+				 altTop = altCent + heightBar->Value;
 				 decTLabel->Text = altTop.ToString();
-				 decBBar->Maximum = altTop - 15;
-				 pictureBox1->Refresh();
 				 // view area = r^2 * (theta2-theta1) * (sin(phi2)-sin(phi1))
-				 Mthres = 680-(Int16)(500.0/2.0*Math::Log10((AzRight-AzLeft)*(sin(altTop/180.0*pi)-sin(altBottom/180.0*pi))/360.0/(1-sin(10.0/180.0*pi))));
+				 Mthres = 600-(Int16)(500.0/2.0*Math::Log10((AzRight-AzLeft)*(sin(altTop/180.0*pi)-sin(altBottom/180.0*pi))/360.0/(1-sin(10.0/180.0*pi))));
+
+				 pictureBox1->Refresh();
 			 }
 	private: double windowX(double az, double alt) {
 				 double delta = (az - AzCent) / (AzRight - AzCent);
@@ -471,6 +493,6 @@ namespace astro2 {
 				 }
 
 			 }
-	};
+};
 
 }
