@@ -73,15 +73,16 @@ namespace astro2 {
 		Graphics^ graph;
 		Rectangle rect;
 		static const double groupRadX=2*pi/32.0, groupRadY=pi/32.0;
+		static const double drawSize = 5.0;
 		Int16 Mthres;
         static Pen^ gridPen = gcnew Pen(Color::Blue);
-		static Pen^ starOPen = gcnew Pen(Color::PaleTurquoise);
-		static Pen^ starBPen = gcnew Pen(Color::PaleTurquoise);
-		static Pen^ starAPen = gcnew Pen(Color::White);
-		static Pen^ starFPen = gcnew Pen(Color::Yellow);
-		static Pen^ starGPen = gcnew Pen(Color::Orange);
-		static Pen^ starKPen = gcnew Pen(Color::Tomato);
-		static Pen^ starMPen = gcnew Pen(Color::Tomato);
+		static Brush^ starOBrush = gcnew SolidBrush(Color::PaleTurquoise);
+		static Brush^ starBBrush = gcnew SolidBrush(Color::PaleTurquoise);
+		static Brush^ starABrush = gcnew SolidBrush(Color::White);
+		static Brush^ starFBrush = gcnew SolidBrush(Color::Yellow);
+		static Brush^ starGBrush = gcnew SolidBrush(Color::Orange);
+		static Brush^ starKBrush = gcnew SolidBrush(Color::Tomato);
+		static Brush^ starMBrush = gcnew SolidBrush(Color::Tomato);
 
 		
 		ref class SAOheader {
@@ -101,19 +102,20 @@ namespace astro2 {
 			array<wchar_t> ^is;
 			Int16 mag;
 			double vi;
-			double size;
 			float xrpm, xdpm;
 			int groupX, groupY;
+			double physicalDiameter, size;
 			CatalogEnt() {
 				is = gcnew array<wchar_t>(2);
 			}
 			System::Void calcVI() {
-				double gamma = 0.6;
-				double c1 = Math::Pow(100, -0/500.0*gamma);
-				double c0 = Math::Pow(100, -1400/500.0*gamma);
+				double gamma = 0.5;
+				double c1 = Math::Pow(100, -0/500.0/2.0*gamma);
+				double c0 = Math::Pow(100, -1400/500.0/2.0*gamma);
 
 				vi = Math::Pow(100,-mag/500.0);
-				size = (Math::Pow(vi, gamma)-c0)/(c1-c0)*4+1;
+				physicalDiameter = Math::Sqrt(vi);
+				size = (Math::Pow(physicalDiameter, gamma)-c0)/(c1-c0)*30+1;
 			}
 			System::Void draw(Form2 ^form) {
 				form->drawStar(this->sra0/pi*180.0, this->sdec0/pi*180.0, size, this->is[0]);
@@ -176,7 +178,7 @@ namespace astro2 {
 			// 
 			this->pictureBox1->Location = System::Drawing::Point(12, 12);
 			this->pictureBox1->Name = L"pictureBox1";
-			this->pictureBox1->Size = System::Drawing::Size(600, 393);
+			this->pictureBox1->Size = System::Drawing::Size(729, 506);
 			this->pictureBox1->TabIndex = 0;
 			this->pictureBox1->TabStop = false;
 			this->pictureBox1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Form2::pictureBox1_Paint);
@@ -184,7 +186,7 @@ namespace astro2 {
 			// RABar
 			// 
 			this->RABar->LargeChange = 15;
-			this->RABar->Location = System::Drawing::Point(112, 411);
+			this->RABar->Location = System::Drawing::Point(249, 524);
 			this->RABar->Maximum = 360;
 			this->RABar->Name = L"RABar";
 			this->RABar->Size = System::Drawing::Size(400, 45);
@@ -196,10 +198,11 @@ namespace astro2 {
 			// 
 			// widthBar
 			// 
-			this->widthBar->Location = System::Drawing::Point(512, 411);
+			this->widthBar->Location = System::Drawing::Point(649, 524);
 			this->widthBar->Maximum = 180;
-			this->widthBar->Minimum = 15;
+			this->widthBar->Minimum = 30;
 			this->widthBar->Name = L"widthBar";
+			this->widthBar->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
 			this->widthBar->Size = System::Drawing::Size(100, 45);
 			this->widthBar->TabIndex = 2;
 			this->widthBar->TickFrequency = 15;
@@ -209,7 +212,7 @@ namespace astro2 {
 			// RALabel
 			// 
 			this->RALabel->AutoSize = true;
-			this->RALabel->Location = System::Drawing::Point(301, 393);
+			this->RALabel->Location = System::Drawing::Point(365, 506);
 			this->RALabel->Name = L"RALabel";
 			this->RALabel->Size = System::Drawing::Size(23, 12);
 			this->RALabel->TabIndex = 3;
@@ -218,7 +221,7 @@ namespace astro2 {
 			// 
 			// heightBar
 			// 
-			this->heightBar->Location = System::Drawing::Point(618, 300);
+			this->heightBar->Location = System::Drawing::Point(747, 420);
 			this->heightBar->Maximum = 90;
 			this->heightBar->Minimum = 15;
 			this->heightBar->Name = L"heightBar";
@@ -232,13 +235,13 @@ namespace astro2 {
 			// 
 			// decBar
 			// 
-			this->decBar->Location = System::Drawing::Point(618, 13);
+			this->decBar->Location = System::Drawing::Point(747, 12);
 			this->decBar->Maximum = 90;
 			this->decBar->Minimum = -90;
 			this->decBar->Name = L"decBar";
 			this->decBar->Orientation = System::Windows::Forms::Orientation::Vertical;
 			this->decBar->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->decBar->Size = System::Drawing::Size(45, 281);
+			this->decBar->Size = System::Drawing::Size(45, 402);
 			this->decBar->TabIndex = 4;
 			this->decBar->TickFrequency = 15;
 			this->decBar->ValueChanged += gcnew System::EventHandler(this, &Form2::updateAALabel);
@@ -246,7 +249,7 @@ namespace astro2 {
 			// RARLabel
 			// 
 			this->RARLabel->AutoSize = true;
-			this->RARLabel->Location = System::Drawing::Point(584, 393);
+			this->RARLabel->Location = System::Drawing::Point(715, 506);
 			this->RARLabel->Name = L"RARLabel";
 			this->RARLabel->Size = System::Drawing::Size(17, 12);
 			this->RARLabel->TabIndex = 5;
@@ -256,7 +259,7 @@ namespace astro2 {
 			// RALLabel
 			// 
 			this->RALLabel->AutoSize = true;
-			this->RALLabel->Location = System::Drawing::Point(12, 393);
+			this->RALLabel->Location = System::Drawing::Point(13, 506);
 			this->RALLabel->Name = L"RALLabel";
 			this->RALLabel->Size = System::Drawing::Size(17, 12);
 			this->RALLabel->TabIndex = 5;
@@ -266,7 +269,7 @@ namespace astro2 {
 			// decTLabel
 			// 
 			this->decTLabel->AutoSize = true;
-			this->decTLabel->Location = System::Drawing::Point(595, 12);
+			this->decTLabel->Location = System::Drawing::Point(724, 12);
 			this->decTLabel->Name = L"decTLabel";
 			this->decTLabel->Size = System::Drawing::Size(17, 12);
 			this->decTLabel->TabIndex = 6;
@@ -276,7 +279,7 @@ namespace astro2 {
 			// decBLabel
 			// 
 			this->decBLabel->AutoSize = true;
-			this->decBLabel->Location = System::Drawing::Point(595, 381);
+			this->decBLabel->Location = System::Drawing::Point(724, 494);
 			this->decBLabel->Name = L"decBLabel";
 			this->decBLabel->Size = System::Drawing::Size(17, 12);
 			this->decBLabel->TabIndex = 6;
@@ -287,7 +290,7 @@ namespace astro2 {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(661, 442);
+			this->ClientSize = System::Drawing::Size(784, 562);
 			this->Controls->Add(this->decBLabel);
 			this->Controls->Add(this->decTLabel);
 			this->Controls->Add(this->RALLabel);
@@ -317,11 +320,18 @@ namespace astro2 {
 				 loadSAO();
 			 }
 	private: System::Void pictureBox1_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
+				 e->Graphics->SmoothingMode = Drawing2D::SmoothingMode::HighQuality;
+				 e->Graphics->InterpolationMode = Drawing2D::InterpolationMode::HighQualityBicubic;
+				// e->Graphics->PageScale = 30.0F;
 				graph = e->Graphics;
 				graph->Clear(Color::Black);
 				rect = pictureBox1->ClientRectangle;
+				rect.Width *= drawSize;
+				rect.Height *= drawSize;
 
+				e->Graphics->ScaleTransform(1.0/drawSize,1.0/drawSize);
 				drawGrid();
+				// e->Graphics->PageScale = 1.0F;
 				drawStar();
 			 }
 	private: System::Void drawGrid() {
@@ -406,19 +416,19 @@ namespace astro2 {
 			 }
 
 	private: System::Void drawStar(double ra, double dec, int size, wchar_t is) {
-				Pen^ pen=starAPen;
+				Brush^ brush=starABrush;
 				double x, y;
 				x = windowX(ra, dec);
 				y = windowY(ra, dec);
 				if (!Double::IsNaN(x)&&!Double::IsNaN(y)) {
-					if (is=='O') pen = starOPen;
-					if (is=='B') pen = starBPen;
-					if (is=='A') pen = starAPen;
-					if (is=='F') pen = starFPen;
-					if (is=='G') pen = starGPen;
-					if (is=='K') pen = starKPen;
-					if (is=='M') pen = starMPen;
-					graph->DrawEllipse(pen, rect.X+rect.Width*x, rect.Y+rect.Height*y, size, size);
+					if (is=='O') brush = starOBrush;
+					if (is=='B') brush = starBBrush;
+					if (is=='A') brush = starABrush;
+					if (is=='F') brush = starFBrush;
+					if (is=='G') brush = starGBrush;
+					if (is=='K') brush = starKBrush;
+					if (is=='M') brush = starMBrush;
+					graph->FillEllipse(brush, rect.X+rect.Width*x-size/2.0, rect.Y+rect.Height*y-size/2.0, size, size);
 				}
 			 }
 	private: System::Void updateAALabel(System::Object^  sender, System::EventArgs^  e) {
@@ -446,7 +456,7 @@ namespace astro2 {
 				 pictureBox1->Refresh();
 			 }
 	private: double windowX(double az, double alt) {
-				 double delta = (az - AzCent) / (AzRight - AzCent);
+				 double delta = (az - AzCent) / (AzLeft - AzCent);
 				 //double x = delta * cos(alt/180.0*pi) / cos(altBottom/180.0*pi);
 				 double x = delta * cos(alt/180.0*pi);
 				 if (x>1 || x<-1) {
