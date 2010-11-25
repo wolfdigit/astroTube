@@ -43,20 +43,20 @@ namespace astro2 {
 			}
 		}
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
-	private: System::Windows::Forms::TrackBar^  RABar;
-	private: System::Windows::Forms::TrackBar^  widthBar;
 
 
 
-	private: System::Windows::Forms::Label^  RALabel;
-	private: System::Windows::Forms::TrackBar^  heightBar;
 
-	private: System::Windows::Forms::TrackBar^  decBar;
 
-	private: System::Windows::Forms::Label^  RARLabel;
-	private: System::Windows::Forms::Label^  RALLabel;
-	private: System::Windows::Forms::Label^  decTLabel;
-	private: System::Windows::Forms::Label^  decBLabel;
+
+
+
+
+
+
+
+
+
 
 
 
@@ -69,6 +69,7 @@ namespace astro2 {
 		System::ComponentModel::Container ^components;
 		double AzCent, AzLeft, AzRight;
 		double altCent, altTop, altBottom;
+		double viewWidth;
 		static double pi = acos(-1.0);
 		Graphics^ graph;
 		Rectangle rect;
@@ -158,166 +159,40 @@ namespace astro2 {
 		void InitializeComponent(void)
 		{
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
-			this->RABar = (gcnew System::Windows::Forms::TrackBar());
-			this->widthBar = (gcnew System::Windows::Forms::TrackBar());
-			this->RALabel = (gcnew System::Windows::Forms::Label());
-			this->heightBar = (gcnew System::Windows::Forms::TrackBar());
-			this->decBar = (gcnew System::Windows::Forms::TrackBar());
-			this->RARLabel = (gcnew System::Windows::Forms::Label());
-			this->RALLabel = (gcnew System::Windows::Forms::Label());
-			this->decTLabel = (gcnew System::Windows::Forms::Label());
-			this->decBLabel = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->RABar))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->widthBar))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->heightBar))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->decBar))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// pictureBox1
 			// 
-			this->pictureBox1->Location = System::Drawing::Point(12, 12);
+			this->pictureBox1->Location = System::Drawing::Point(0, 0);
 			this->pictureBox1->Name = L"pictureBox1";
-			this->pictureBox1->Size = System::Drawing::Size(729, 506);
+			this->pictureBox1->Size = System::Drawing::Size(784, 562);
 			this->pictureBox1->TabIndex = 0;
 			this->pictureBox1->TabStop = false;
+			this->pictureBox1->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form2::pictureBox1_MouseMove);
 			this->pictureBox1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Form2::pictureBox1_Paint);
-			// 
-			// RABar
-			// 
-			this->RABar->LargeChange = 15;
-			this->RABar->Location = System::Drawing::Point(249, 524);
-			this->RABar->Maximum = 360;
-			this->RABar->Name = L"RABar";
-			this->RABar->Size = System::Drawing::Size(400, 45);
-			this->RABar->SmallChange = 5;
-			this->RABar->TabIndex = 1;
-			this->RABar->TickFrequency = 15;
-			this->RABar->Value = 180;
-			this->RABar->ValueChanged += gcnew System::EventHandler(this, &Form2::updateAALabel);
-			// 
-			// widthBar
-			// 
-			this->widthBar->Location = System::Drawing::Point(649, 524);
-			this->widthBar->Maximum = 180;
-			this->widthBar->Minimum = 30;
-			this->widthBar->Name = L"widthBar";
-			this->widthBar->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-			this->widthBar->Size = System::Drawing::Size(100, 45);
-			this->widthBar->TabIndex = 2;
-			this->widthBar->TickFrequency = 15;
-			this->widthBar->Value = 90;
-			this->widthBar->ValueChanged += gcnew System::EventHandler(this, &Form2::updateAALabel);
-			// 
-			// RALabel
-			// 
-			this->RALabel->AutoSize = true;
-			this->RALabel->Location = System::Drawing::Point(365, 506);
-			this->RALabel->Name = L"RALabel";
-			this->RALabel->Size = System::Drawing::Size(23, 12);
-			this->RALabel->TabIndex = 3;
-			this->RALabel->Text = L"180";
-			this->RALabel->TextAlign = System::Drawing::ContentAlignment::BottomCenter;
-			// 
-			// heightBar
-			// 
-			this->heightBar->Location = System::Drawing::Point(747, 420);
-			this->heightBar->Maximum = 90;
-			this->heightBar->Minimum = 15;
-			this->heightBar->Name = L"heightBar";
-			this->heightBar->Orientation = System::Windows::Forms::Orientation::Vertical;
-			this->heightBar->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->heightBar->Size = System::Drawing::Size(45, 105);
-			this->heightBar->TabIndex = 4;
-			this->heightBar->TickFrequency = 15;
-			this->heightBar->Value = 45;
-			this->heightBar->ValueChanged += gcnew System::EventHandler(this, &Form2::updateAALabel);
-			// 
-			// decBar
-			// 
-			this->decBar->Location = System::Drawing::Point(747, 12);
-			this->decBar->Maximum = 90;
-			this->decBar->Minimum = -90;
-			this->decBar->Name = L"decBar";
-			this->decBar->Orientation = System::Windows::Forms::Orientation::Vertical;
-			this->decBar->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->decBar->Size = System::Drawing::Size(45, 402);
-			this->decBar->TabIndex = 4;
-			this->decBar->TickFrequency = 15;
-			this->decBar->ValueChanged += gcnew System::EventHandler(this, &Form2::updateAALabel);
-			// 
-			// RARLabel
-			// 
-			this->RARLabel->AutoSize = true;
-			this->RARLabel->Location = System::Drawing::Point(715, 506);
-			this->RARLabel->Name = L"RARLabel";
-			this->RARLabel->Size = System::Drawing::Size(17, 12);
-			this->RARLabel->TabIndex = 5;
-			this->RARLabel->Text = L"90";
-			this->RARLabel->TextAlign = System::Drawing::ContentAlignment::BottomRight;
-			// 
-			// RALLabel
-			// 
-			this->RALLabel->AutoSize = true;
-			this->RALLabel->Location = System::Drawing::Point(13, 506);
-			this->RALLabel->Name = L"RALLabel";
-			this->RALLabel->Size = System::Drawing::Size(17, 12);
-			this->RALLabel->TabIndex = 5;
-			this->RALLabel->Text = L"90";
-			this->RALLabel->TextAlign = System::Drawing::ContentAlignment::BottomLeft;
-			// 
-			// decTLabel
-			// 
-			this->decTLabel->AutoSize = true;
-			this->decTLabel->Location = System::Drawing::Point(724, 12);
-			this->decTLabel->Name = L"decTLabel";
-			this->decTLabel->Size = System::Drawing::Size(17, 12);
-			this->decTLabel->TabIndex = 6;
-			this->decTLabel->Text = L"90";
-			this->decTLabel->TextAlign = System::Drawing::ContentAlignment::TopRight;
-			// 
-			// decBLabel
-			// 
-			this->decBLabel->AutoSize = true;
-			this->decBLabel->Location = System::Drawing::Point(724, 494);
-			this->decBLabel->Name = L"decBLabel";
-			this->decBLabel->Size = System::Drawing::Size(17, 12);
-			this->decBLabel->TabIndex = 6;
-			this->decBLabel->Text = L"90";
-			this->decBLabel->TextAlign = System::Drawing::ContentAlignment::BottomRight;
 			// 
 			// Form2
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(784, 562);
-			this->Controls->Add(this->decBLabel);
-			this->Controls->Add(this->decTLabel);
-			this->Controls->Add(this->RALLabel);
-			this->Controls->Add(this->RARLabel);
-			this->Controls->Add(this->decBar);
-			this->Controls->Add(this->heightBar);
-			this->Controls->Add(this->RALabel);
-			this->Controls->Add(this->widthBar);
-			this->Controls->Add(this->RABar);
 			this->Controls->Add(this->pictureBox1);
 			this->Name = L"Form2";
 			this->Text = L"Form2";
 			this->Load += gcnew System::EventHandler(this, &Form2::Form2_Load);
+			this->SizeChanged += gcnew System::EventHandler(this, &Form2::Form2_SizeChanged);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->RABar))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->widthBar))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->heightBar))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->decBar))->EndInit();
 			this->ResumeLayout(false);
-			this->PerformLayout();
 
 		}
 #pragma endregion
 	private: System::Void Form2_Load(System::Object^  sender, System::EventArgs^  e) {
-				 RABar->Value++;
-				 RABar->Value--;
+				 AzCent = 180.0;
+				 altCent = 0.0;
+				 viewWidth = 90.0;
 				 loadSAO();
+				 updateViewDelta(0.0, 0.0, 0.0);
 			 }
 	private: System::Void pictureBox1_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
 				 e->Graphics->SmoothingMode = Drawing2D::SmoothingMode::HighQuality;
@@ -431,28 +306,50 @@ namespace astro2 {
 					graph->FillEllipse(brush, rect.X+rect.Width*x-size/2.0, rect.Y+rect.Height*y-size/2.0, size, size);
 				}
 			 }
-	private: System::Void updateAALabel(System::Object^  sender, System::EventArgs^  e) {
-				 if (sender==widthBar) {
-					 heightBar->Value = widthBar->Value/2;
+	private: System::Void updateLabel() {
+				 String^ title = gcnew String("View: (");
+				 title += Math::Round(AzRight).ToString() + " ~ " +  Math::Round(AzCent).ToString() + " ~ " + Math::Round(AzLeft).ToString();
+				 title += ", ";
+				 title += Math::Round(altBottom).ToString() + " ~ " +  Math::Round(altCent).ToString() + " ~ "  + Math::Round(altTop).ToString();
+				 title += ")";
+				 this->Text = title;
+			 }
+	private: System::Void updateViewDelta(double dXCent, double dYCent, double dWidth) {
+				 static const double AzCentMin = 0, AzCentMax = 360;
+				 static const double altCentMin = -90, altCentMax = 90;
+				 static const double viewWidthMin = 15, viewWidthMax = 180;
+				 static const double moveSpeed=1/180.0;
+				 {
+					 double newValue = AzCent + dXCent*viewWidth*moveSpeed;
+					 if (AzCentMin<=newValue&&newValue<=AzCentMax) {
+						 AzCent = newValue;
+					 }
 				 }
-				 if (sender==heightBar) {
-					 widthBar->Value = heightBar->Value*2;
+				 {
+					 double newValue = altCent + dYCent*viewWidth*moveSpeed;
+					 if (altCentMin<=newValue&&newValue<=altCentMax) {
+						 altCent = newValue;
+					 }
 				 }
-				 AzCent = RABar->Value;
-				 RALabel->Text = AzCent.ToString();
-				 AzLeft = AzCent - widthBar->Value;
-				 RALLabel->Text = AzLeft.ToString();
-				 AzRight = AzCent + widthBar->Value;
-				 RARLabel->Text = AzRight.ToString();
-
-				 altCent = decBar->Value;
-				 altBottom = altCent - heightBar->Value;
-				 decBLabel->Text = altBottom.ToString();
-				 altTop = altCent + heightBar->Value;
-				 decTLabel->Text = altTop.ToString();
+				 {
+					 double newValue = viewWidth + dWidth;
+					 if (viewWidthMin<=newValue&&newValue<=viewWidthMax) {
+						 viewWidth = newValue;
+					 }
+				 }
+				 AzLeft = AzCent - viewWidth;
+				 AzRight = AzCent + viewWidth;
+				 altBottom = altCent - viewWidth/pictureBox1->ClientRectangle.Width*pictureBox1->ClientRectangle.Height;
+				 altTop = altCent + viewWidth/pictureBox1->ClientRectangle.Width*pictureBox1->ClientRectangle.Height;
 				 // view area = r^2 * (theta2-theta1) * (sin(phi2)-sin(phi1))
-				 Mthres = 600-(Int16)(500.0/2.0*Math::Log10((AzRight-AzLeft)*(sin(altTop/180.0*pi)-sin(altBottom/180.0*pi))/360.0/(1-sin(10.0/180.0*pi))));
+				 double pivotArea = (2*pi-0) * (sin(90.0/180.0*pi)-sin(10.0/180.0*pi));
+				 double tmpPhi1=altBottom, tmpPhi2=altTop;
+				 if (tmpPhi1<-90) tmpPhi1 = -90;
+				 if (tmpPhi2>90) tmpPhi2 = 90;
+				 double myArea = (AzRight/180.0*pi-AzLeft/180.0*pi) * (sin(tmpPhi2/180.0*pi)-sin(tmpPhi1/180.0*pi));
+				 Mthres = 600-(Int16)(500*Math::Log10(myArea/pivotArea)/2.0);
 
+				 updateLabel();
 				 pictureBox1->Refresh();
 			 }
 	private: double windowX(double az, double alt) {
@@ -503,6 +400,29 @@ namespace astro2 {
 				 }
 
 			 }
+private: System::Void pictureBox1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+			 static Point prev, cur;
+			 if (e->Button==::MouseButtons::None) {
+				 cur = Point::Empty;
+			 }
+			 else {
+				 cur = e->Location;
+			 }
+			 if (!prev.IsEmpty) {
+				 if (e->Button==::MouseButtons::Left) {
+					 updateViewDelta(cur.X-prev.X, cur.Y-prev.Y, 0.0);
+				 }
+				 if (e->Button==::MouseButtons::Right) {
+					 updateViewDelta(0.0, 0.0, cur.Y-prev.Y);
+				 }
+			 }
+			 prev = cur;
+		 }
+private: System::Void Form2_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			 pictureBox1->Size = this->ClientRectangle.Size;
+			 updateViewDelta(0.0, 0.0, 0.0);
+			 updateLabel();
+		 }
 };
 
 }
