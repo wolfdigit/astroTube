@@ -1,5 +1,4 @@
 #pragma once
-#include <math.h>
 
 using namespace System;
 using namespace System::ComponentModel;
@@ -283,15 +282,16 @@ namespace astro2 {
 						}
 					}
 				}
-				//for (int i=0; i<saoHeader.starn; i++) {
-					//if (catalog[i]->mag<800) {
-						//catalog[i]->draw(this);
-					//}
-				//}
 			 }
 
 	private: System::Void drawStar(double ra, double dec, int size, wchar_t is) {
 				Brush^ brush=starABrush;
+				//if (ra<AzLeft) {
+				//	ra += 360.0;
+				//}
+				//if (ra>AzRight) {
+				//	ra -= 360.0;
+				//}
 				double x, y;
 				x = windowX(ra, dec);
 				y = windowY(ra, dec);
@@ -321,9 +321,18 @@ namespace astro2 {
 				 static const double moveSpeed=1/180.0;
 				 {
 					 double newValue = AzCent + dXCent*viewWidth*moveSpeed;
+					 /*
 					 if (AzCentMin<=newValue&&newValue<=AzCentMax) {
 						 AzCent = newValue;
 					 }
+					 */
+					 if (newValue>360.0) {
+						 newValue -= 360.0;
+					 }
+					 if (newValue<0.0) {
+						 newValue += 360.0;
+					 }
+					 AzCent = newValue;
 				 }
 				 {
 					 double newValue = altCent + dYCent*viewWidth*moveSpeed;
@@ -353,13 +362,16 @@ namespace astro2 {
 				 pictureBox1->Refresh();
 			 }
 	private: double windowX(double az, double alt) {
-				 double delta = (az - AzCent) / (AzLeft - AzCent);
+				 double delta = (az - AzCent);
+				 if (delta>180.0) delta -= 360.0;
+				 if (delta<-180.0) delta += 360.0;
+				 delta = delta / viewWidth;
 				 //double x = delta * cos(alt/180.0*pi) / cos(altBottom/180.0*pi);
-				 double x = delta * cos(alt/180.0*pi);
+				 double x = delta * Math::Cos(alt/180.0*pi);
 				 if (x>1 || x<-1) {
 					 return System::Double::NaN;
 				 }
-				 return 0.5 + x/2;
+				 return 0.5 - x/2;
 			 }
 	private: double windowY(double az, double alt) {
 				 double y = (alt - altBottom) / (altTop - altBottom);
